@@ -37,6 +37,14 @@ class CacheResponse
     public function handle(Request $request, Closure $next, $path=null)
     {
         $response = $next($request);
+        
+        /// START ///
+        /**
+         * 
+         *  You can create your own middleware and use "START" to "END" code in your own middleware as per the "readme.md" file
+         *  You can change "if/else" as per your own choice.
+         * 
+         */
         $url = $request->getUri();
         if (
             strpos($url, "analyze") !== false ||
@@ -58,6 +66,11 @@ class CacheResponse
 
             return $response;
         }
+
+        /// END ///
+
+        // Add $this->cache->setCachePath($path); below and $path=null parameter in "function" I found it in the original repository, but I am not sure where, if you can find
+        // please give a credit to the original author.
 
         if ($this->shouldCache($request, $response)) {
             $this->cache->setCachePath($path);
