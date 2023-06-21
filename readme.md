@@ -212,6 +212,37 @@ By default, all GET requests with a 200 HTTP response code are cached. If you wa
 
 3. Finally, update the middleware references in your `app/Http/Kernel.php` file, to point to your own middleware.
 
+##
+
+Subdomain Htaccess
+
+```
+RewriteCond %{REQUEST_URI} ^/?$
+RewriteCond %{DOCUMENT_ROOT}/page-cache/pc__index__pc.html -f
+RewriteRule .? page-cache/pc__index__pc.html [L]
+
+RewriteCond %{DOCUMENT_ROOT}/page-cache/%{HTTP_HOST}/%{REQUEST_URI}.html -f
+RewriteRule . page-cache/%{HTTP_HOST}/%{REQUEST_URI}.html [L]
+
+RewriteCond %{DOCUMENT_ROOT}/page-cache/%{HTTP_HOST}/%{REQUEST_URI}.json -f
+RewriteRule . page-cache/%{HTTP_HOST}/%{REQUEST_URI}.json [L]
+
+RewriteCond %{DOCUMENT_ROOT}/page-cache/%{HTTP_HOST}/%{REQUEST_URI}.xml -f
+RewriteRule . page-cache/%{HTTP_HOST}/%{REQUEST_URI}.xml [L]
+
+RewriteCond %{HTTP_HOST} ^([^\.]+)\. [NC]
+RewriteRule .* - [E=SUBDOMAIN:%1]
+
+RewriteCond %{DOCUMENT_ROOT}/page-cache/%{ENV:SUBDOMAIN}/%{REQUEST_URI}.html -f
+RewriteRule . page-cache/%{ENV:SUBDOMAIN}/%{REQUEST_URI}.html [L]
+
+RewriteCond %{DOCUMENT_ROOT}/page-cache/%{ENV:SUBDOMAIN}/%{REQUEST_URI}.json -f
+RewriteRule . page-cache/%{ENV:SUBDOMAIN}/%{REQUEST_URI}.json [L]
+
+RewriteCond %{DOCUMENT_ROOT}/page-cache/%{ENV:SUBDOMAIN}/%{REQUEST_URI}.xml -f
+RewriteRule . page-cache/%{ENV:SUBDOMAIN}/%{REQUEST_URI}.xml [L]
+```
+
 ## License
 
 The Page Cache package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

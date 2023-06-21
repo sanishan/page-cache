@@ -23,6 +23,7 @@ class CacheResponse
      */
     public function __construct(Cache $cache)
     {
+        // dd($cache);
         $this->cache = $cache;
     }
 
@@ -33,11 +34,33 @@ class CacheResponse
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $path=null)
     {
         $response = $next($request);
+        $url = $request->getUri();
+        if (
+            strpos($url, "analyze") !== false ||
+            strpos($url, "watch") !== false ||
+            strpos($url, "sitemap") !== false ||
+            strpos($url, "convert") !== false ||
+            strpos($url, "getLink") !== false ||
+            strpos($url, "list") !== false ||
+            strpos($url, "myadminsite") !== false ||
+            strpos($url, "login") !== false ||
+            strpos($url, "register") !== false ||
+            strpos($url, "admin") !== false ||
+            strpos($url, "link") !== false ||
+            strpos($url, "delete") !== false ||
+            strpos($url, "unique") !== false ||
+            strpos($url, "change") !== false ||
+            strpos($url, "change_pass") !== false
+        ) {
+
+            return $response;
+        }
 
         if ($this->shouldCache($request, $response)) {
+            $this->cache->setCachePath($path);
             $this->cache->cache($request, $response);
         }
 
@@ -53,6 +76,7 @@ class CacheResponse
      */
     protected function shouldCache(Request $request, Response $response)
     {
+
         return $request->isMethod('GET') && $response->getStatusCode() == 200;
     }
 }
